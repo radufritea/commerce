@@ -3,5 +3,15 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    {% if listings_list %}
+    <ul>
+      {% for listing in listings_list %}
+        <li>
+          <a href="#">{{ listing.name }}</a> ({{book.author}})
+        </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p>There are no listings added.</p>
+    {% endif %}
 {% endblock %}
