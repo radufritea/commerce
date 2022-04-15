@@ -4,9 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class User(AbstractUser):
-    pass
-
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Category name")
 
@@ -26,8 +23,11 @@ class Listing(models.Model):
 
     def __str__(self):
         return self.title
+    
 # class Bid(models.Model):
 #     pass
 
 # class Comment(models.Model):
 #     pass
+class User(AbstractUser):
+    watchlist = models.ManyToManyField(Listing, blank=True, related_name="watchers")

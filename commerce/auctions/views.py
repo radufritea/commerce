@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
+from django.contrib.auth.decorators import login_required
 from .models import Category, User, Listing
 from .forms import ListingForm
 
@@ -22,6 +23,26 @@ def category_listings(request, pk):
     listings = Listing.objects.filter(category=pk)
     category = Category.objects.get(pk=pk)
     return render(request, "auctions/category.html", {"listings": listings, "category": category})
+
+@login_required
+def show_watchlist(request):
+    current_user = request.user
+    watchlist = current_user.watchlist.all()
+    return render(request, "auctions/watchlist.html", {"watchlist": watchlist})
+
+@login_required
+def watch_manager(request):
+    pk = request.GET.get('pk')
+    current_user = request.user
+    watchlist = current_user.watchlist.all()
+    print(pk)
+    listing = Listing.objects.get(id=pk)
+    if listing in watchlist:
+       current_user.watchlist.remove(pk)
+    else:
+       current_user.watchlist.add(pk)
+    return redirect("listing_details", pk)
+
 
 def login_view(request):
     if request.method == "POST":

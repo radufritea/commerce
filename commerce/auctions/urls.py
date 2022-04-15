@@ -12,6 +12,8 @@ urlpatterns = [
     path("listing/<int:pk>", views.ListingDetailsView.as_view(), name="listing_details"),
     path("categories", views.CategoriesListView.as_view(), name="categories"),
     path("category/<int:pk>", views.category_listings, name="category"),
+    path("watchlist", views.show_watchlist, name="watchlist"),
+    path("watch_manager", views.watch_manager, name="watch_manager"),
 ]
 
 if settings.DEBUG:
