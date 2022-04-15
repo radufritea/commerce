@@ -14,6 +14,7 @@ urlpatterns = [
     path("category/<int:pk>", views.category_listings, name="category"),
     path("watchlist", views.show_watchlist, name="watchlist"),
     path("watch_manager", views.watch_manager, name="watch_manager"),
+    path("bid", views.bid, name="bid"),
 ]
 
 if settings.DEBUG:

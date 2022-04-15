@@ -13,4 +13,13 @@
     {% csrf_token %}
     <input class="btn btn-primary" type="submit" value="Add to Watchlist">
 </form>
+
+<form action="{% url 'bid' %}?pk={{ listing.id }}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <input class="form-control" type="text" name="bid_value">
+        <input class="btn btn-primary" type="submit" value="Bid">
+    </div>
+</form>
+<p>{{ message }}</p>
 {% endblock %}

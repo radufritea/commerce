@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from .models import Category, User, Listing
+from .models import Category, User, Listing, Bid
 from .forms import ListingForm
 
 class ListingsListView(generic.ListView):
@@ -42,6 +42,29 @@ def watch_manager(request):
     else:
        current_user.watchlist.add(pk)
     return redirect("listing_details", pk)
+
+@login_required
+def bid(request):
+    if request.method == "POST":
+        bid_value = int(request.POST.get("bid_value"))
+        pk = request.GET.get('pk')
+        listing = Listing.objects.get(id=pk)
+        current_bid = Bid.objects.filter(listing=pk, value__gt=bid_value)
+        message = ""
+
+        if bid_value < listing.starting_bid:
+            message = "Your bid is smaller than the starting bid."
+            
+        elif not current_bid:
+            Bid.objects.create(value=bid_value, listing_id=listing.id, user_id=request.user.id)
+            message = "Your bid has been recorded."
+
+        else:
+            # error your bid is smaller
+            message = "Your bid is smaller than the largest existing bid."
+
+        print(message)
+        return redirect ("listing_details", pk)
 
 
 def login_view(request):
