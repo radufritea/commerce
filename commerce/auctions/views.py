@@ -4,15 +4,24 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import generic
-from .models import User, Listing
+from .models import Category, User, Listing
 from .forms import ListingForm
 
 class ListingsListView(generic.ListView):
     model = Listing
-    # context_object_name = "listings_list"
-    # queryset = Listing.objects.all()
     template_name = "auctions/index.html"
     # paginate_by = 10
+
+class ListingDetailsView(generic.DetailView):
+    model = Listing
+
+class CategoriesListView(generic.ListView):
+    model = Category
+
+def category_listings(request, pk):
+    listings = Listing.objects.filter(category=pk)
+    category = Category.objects.get(pk=pk)
+    return render(request, "auctions/category.html", {"listings": listings, "category": category})
 
 def login_view(request):
     if request.method == "POST":

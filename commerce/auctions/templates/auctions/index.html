@@ -3,11 +3,14 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    {% if listings_list %}
+    {% if listing_list %}
     <ul>
-      {% for listing in listings_list %}
+      {% for listing in listing_list %}
         <li>
-          <a href="#">{{ listing.name }}</a> ({{book.author}})
+          <a href="{% url 'listing_details' listing.id %}">{{ listing.title }}</a>
+          <p>{{ listing.description }}</p>
+          <p>Current price: {{ listing.starting_bid }}</p>
+          <p>{{ listing.image }}</p>
         </li>
       {% endfor %}
     </ul>
