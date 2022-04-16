@@ -19,7 +19,7 @@ class Listing(models.Model):
     title = models.CharField(max_length=200, verbose_name="Name")
     description = models.TextField(verbose_name="Description")
     starting_bid = models.IntegerField(verbose_name="Starting bid (euro)")
-    image = models.ImageField(upload_to="images/", blank=True, verbose_name="Image")
+    image = models.ImageField(upload_to="upload/", blank=True, verbose_name="Image")
     category = models.ForeignKey(Category, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):

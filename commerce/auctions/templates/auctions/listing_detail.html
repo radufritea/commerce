@@ -7,7 +7,7 @@
 
 <p>Current bid: {{ listing.starting_bid }}</p>
 
-<p>Show image!!!</p>
+<img src="{{ listing.image.url }}" alt="Product image" width="250" height="250">
 
 <form action="{% url 'watch_manager' %}?pk={{ listing.id }}" method="post">
     {% csrf_token %}

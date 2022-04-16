@@ -3,33 +3,62 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views import generic
+from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
+
 from .models import Category, User, Listing, Bid
 from .forms import ListingForm
 
-class ListingsListView(generic.ListView):
-    model = Listing
-    template_name = "auctions/index.html"
-    # paginate_by = 10
+# Create a new listing
+def add_listing(request):
+    if request.method == "POST":
+        form = ListingForm(request.POST, request.FILES)
+        if form.is_valid():  
+            form.save()
+            return HttpResponseRedirect(reverse('index'))
+    else:
+        form = ListingForm()
+    
+    return render(request, "auctions/add_listing.html", {"form": form})
 
-class ListingDetailsView(generic.DetailView):
-    model = Listing
 
-class CategoriesListView(generic.ListView):
+# LISTING DETAIL
+def listing(request, pk):
+    listing = Listing.objects.get(id=pk)
+    return render(request, 'auctions/listing_detail.html', {
+        'listing': listing
+    })
+
+
+# INDEX - all listings
+def listings(request):
+    listings = Listing.objects.all()
+    return render(request, 'auctions/index.html', {
+        'listings': listings
+    })
+
+
+class CategoriesListView(ListView):
     model = Category
 
+
+# List all listings in a certain category
 def category_listings(request, pk):
     listings = Listing.objects.filter(category=pk)
     category = Category.objects.get(pk=pk)
     return render(request, "auctions/category.html", {"listings": listings, "category": category})
 
+
+# Show user's watchlist
 @login_required
 def show_watchlist(request):
     current_user = request.user
     watchlist = current_user.watchlist.all()
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist})
 
+
+# Add or remove a listing from the watchlist
 @login_required
 def watch_manager(request):
     pk = request.GET.get('pk')
@@ -41,8 +70,11 @@ def watch_manager(request):
        current_user.watchlist.remove(pk)
     else:
        current_user.watchlist.add(pk)
+
     return redirect("listing_details", pk)
 
+
+# Make a bid if conditions are met
 @login_required
 def bid(request):
     if request.method == "POST":
@@ -117,15 +149,3 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
-
-def add_listing(request):
-    if request.method != "POST":
-        form = ListingForm()
-
-    else:
-        form = ListingForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse("index"))
-    
-    return render(request, "auctions/add_listing.html", {"form": form})
