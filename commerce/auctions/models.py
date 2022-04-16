@@ -36,6 +36,7 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
 
 
-# class Comment(models.Model):
-#     pass
-
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    text = models.TextField()

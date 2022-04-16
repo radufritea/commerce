@@ -16,6 +16,7 @@ urlpatterns = [
     path("watchlist", views.show_watchlist, name="watchlist"),
     path("watch_manager", views.watch_manager, name="watch_manager"),
     path("bid", views.bid, name="bid"),
+    path("comment", views.add_comment, name="add_comment"),
 ]
 
 if settings.DEBUG:

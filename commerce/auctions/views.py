@@ -1,13 +1,12 @@
+from multiprocessing import AuthenticationError
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
-
-from .models import Category, User, Listing, Bid
+from .models import Category, User, Listing, Bid, Comment
 from .forms import ListingForm
 
 # Create a new listing
@@ -26,8 +25,10 @@ def add_listing(request):
 # LISTING DETAIL
 def listing(request, pk):
     listing = Listing.objects.get(id=pk)
+    comments = Comment.objects.filter(listing_id=pk)
     return render(request, 'auctions/listing_detail.html', {
-        'listing': listing
+        'listing': listing,
+        "comments": comments,
     })
 
 
@@ -97,6 +98,17 @@ def bid(request):
 
         print(message)
         return redirect ("listing_details", pk)
+
+@login_required
+def add_comment(request):
+    if request.method == "POST":
+        pk = request.GET.get('pk')
+        text = request.POST.get("comment_text")
+        listing = Listing.objects.get(id=pk)
+        Comment.objects.create(author_id=request.user.id, listing_id=listing.id, text=text)
+    
+    return redirect ("listing_details", pk)
+
 
 
 def login_view(request):
