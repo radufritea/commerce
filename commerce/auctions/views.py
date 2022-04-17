@@ -6,14 +6,16 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
-from .models import Category, User, Listing, Bid, Comment
+from .models import Category, User, Listing, Watchlist, Bid, Comment
 from .forms import ListingForm
 
 # Create a new listing
 def add_listing(request):
     if request.method == "POST":
         form = ListingForm(request.POST, request.FILES)
-        if form.is_valid():  
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
             form.save()
             return HttpResponseRedirect(reverse('index'))
     else:
@@ -63,14 +65,14 @@ def show_watchlist(request):
 @login_required
 def watch_manager(request):
     pk = request.GET.get('pk')
-    current_user = request.user
-    watchlist = current_user.watchlist.all()
+    watchlist = Watchlist.objects.all()
     print(pk)
     listing = Listing.objects.get(id=pk)
+# save listing as a list so you can iterate through it
     if listing in watchlist:
-       current_user.watchlist.remove(pk)
+        Watchlist.objects.filter(listing_id=pk).delete()
     else:
-       current_user.watchlist.add(pk)
+        Watchlist.objects.create(user_id=request.user.id, listing_id=pk)
 
     return redirect("listing_details", pk)
 

@@ -28,7 +28,7 @@
 {% if comments %}
     <ul>
         {% for comment in comments %}
-        <li>{{ comment.author }} said: "{{ comment.text }}"</li>
+        <li>{{ comment.author|title }} said: "{{ comment.text }}"</li>
         {% endfor %}
     </ul>
 {% else %}
